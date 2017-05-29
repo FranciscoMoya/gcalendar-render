@@ -4,7 +4,6 @@ var MILLISECONDS_IN_A_WEEK = 432000000
 
 var authorizeButton = document.getElementById('authorize-button');
 var signoutButton = document.getElementById('signout-button');
-var semesterSelect = document.getElementById('semester-select');
 var helpText = document.getElementById('help-text');
 
 function handleClientLoad() {
@@ -19,7 +18,7 @@ function initClient() {
         discoveryDocs: DISCOVERY_DOCS,
         clientId: CLIENT_ID,
         scope: SCOPES
-    }).then(function () {
+    }).then(() => {
         gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
 
         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
@@ -32,7 +31,6 @@ function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
         authorizeButton.style.display = 'none';
         signoutButton.style.display = 'block';
-        semesterSelect.style.display = 'block';
         displayCalendars();
     } else {
         authorizeButton.style.display = 'block';
@@ -43,31 +41,110 @@ function updateSigninStatus(isSignedIn) {
 function displayCalendars() {
     jQuery('.calendar').each( (i, e) => {
         var div = jQuery(e);
-        div.html(calendarTemplate(div));
-        displayCalendarEvents(div);
+        var ids = div.attr('calids').split(' ');
+        var dates = JSON.parse(div.attr('dates'));
+        div.replaceWith(calendarPeriodSelector(renderAllCalendarPeriods(ids, dates)));
     });
 }
 
-function calendarTemplate(div) {
-    return '<h2></h2><table>'+ weekTemplate(div) + '</table>';
+function calendarPeriodSelector(periods) {
+    var div = jQuery('<div/>').append(selectorWidget(periods));
+    periods.forEach( p => { div.append(p); } );
+    return div;
 }
 
-function weekTemplate(div) {
-    return headTemplate(['', 'L', 'M', 'X', 'J', 'V'])
-        + bodyTemplate(weekRows(timeSlots(div)));
+function selectorWidget(objs) {
+    var sel = jQuery('<select/>');
+    objs.forEach( (o,i) => { sel.append(jQuery('<option/>').attr('value', i).html(o.title)); });
+    sel.change( _ => { showOnly(objs, sel.val()); });
+    showOnly(objs, 0);
+    return sel;
 }
 
-function bodyTemplate(l) {
-    return l.join('');
+function showOnly(objs, selection) {
+    objs.forEach( (o, i) => {
+        if (i != selection) o.hide();
+        else o.show();
+    });
+}
+
+function renderAllCalendarPeriods(ids, dates) {
+    var all = [];
+    for (var period in dates) {
+        var obj = calendarIdSelector(renderAllCalendars(ids, dates[period]));
+        obj.title = period;
+        all.push(obj);
+    }
+    return all;
+}
+
+function calendarIdSelector(cal) {
+    var div = jQuery('<div/>');
+    cal.forEach( c => { div.append(c); });
+    return div;
+}
+
+function renderAllCalendars(ids, date) {
+    var all = [];
+    ids.forEach( id => {
+        all.push(renderCalendar(id, date));
+    });
+    return all;
+}
+
+function renderCalendar(id, datestr) {
+    var datetime = datestr.split(' ');
+    var date = datetime[0];
+    var time = datetime[1];
+    return renderCalendarEvents(id, date, time);
+}
+
+function renderCalendarEvents(id, date, time) {
+    var div = calendarTemplate(id, time);
+    var hour2row = buildHour2Row(div);
+    var start = new Date(date);
+    var end = new Date();
+    end.setTime(start.getTime() + MILLISECONDS_IN_A_WEEK);
+    gapi.client.calendar.events.list({
+        'calendarId': id + '@group.calendar.google.com',
+        'timeMin': start.toISOString(),
+        'timeMax': end.toISOString(),
+        'showDeleted': false,
+        'singleEvents': true
+    }).then(response => {
+        var events = response.result.items;
+        for (var i = 0; i < events.length; i++) {
+            displayEvent(div, events[i], hour2row);
+        }
+    });
+    return div;
+}
+
+function calendarTemplate(id, time) {
+    return jQuery('<div/>')
+        .append(titleTemplate(id))
+        .append(weekTemplate(time));
+}
+
+function titleTemplate(id) {
+    return displayTitle(id, jQuery('<h2/>'));
+}
+
+function weekTemplate(time) {
+    return jQuery('<table/>')
+        .append(headTemplate(['', 'L', 'M', 'X', 'J', 'V']))
+        .append(weekRows(timeSlots(time)));
 }
 
 function headTemplate(l) {
-    return '<tr><th>' + l.join('</th><th>') + '</th></tr>';
+    var h = [];
+    l.forEach(item => { h.push(jQuery('<th/>').html(item)); } );
+    return jQuery('<tr/>').append(h);
 }
 
-function timeSlots(div) {
+function timeSlots(time) {
     var slots = [];
-    var limits = div.attr('time').split('-');
+    var limits = time.split('-');
     for (var t = limits[0]; t != limits[1] && slots.length < 20; t = nextSlot(t))
         slots.push(t);
     return slots;
@@ -80,56 +157,31 @@ function nextSlot(t) {
 
 function weekRows(l) {
     var r = [];
-    l.forEach( (s) => { r.push(rowTemplate([s,'','','','',''])); } );
+    l.forEach( slot => { r.push(rowTemplate([slot,'','','','',''])); } );
     return r;
 }
 
 function rowTemplate(l) {
-    return '<tr><td class="hour">' + l.join('</td><td>') + '</td></tr>';
+    var r = [];
+    l.forEach(item => { r.push(jQuery('<td/>').html(item)); } );
+    return jQuery('<tr class="slot"/>').append(r);
 }
 
-function displayCalendarEvents(div) {
-    var id = div.attr('calid');
-    var hour2row = buildHour2Row(div);
-    var start = new Date(div.attr('date'));
-    var end = new Date();
-    end.setTime(start.getTime() + MILLISECONDS_IN_A_WEEK);
-    displayTitle(div, id);
-    gapi.client.calendar.events.list({
-        'calendarId': id + '@group.calendar.google.com',
-        'timeMin': start.toISOString(),
-        'timeMax': end.toISOString(),
-        'showDeleted': false,
-        'singleEvents': true,
-        'orderBy': 'startTime'
-    }).then(function(response) {
-        var events = response.result.items;
-        if (events.length > 0) {
-            for (i = 0; i < events.length; i++) {
-                displayEvent(div, events[i], hour2row);
-            }
-        }
-    });
-}
 
 function buildHour2Row(div) {
     var d = {};
-    div.find('.hour').each( (i,v) => { d[v.innerText] = 1+i; });
-    return d;    
+    div.find('tr.slot td:first-child').each( (i,v) => { d[v.innerText] = 1+i; });
+    return d;
 }
 
-function displayTitle(div) {
-    var id = div.attr('calid');
+function displayTitle(id, div) {
     gapi.client.calendar.calendars.get({
         'calendarId': id + '@group.calendar.google.com'
-    }).then(function(response) {
-        var title = div.find('h2');
-        title.html(response.result.summary);
-    });
+    }).then(response => { div.html(response.result.summary); });
+    return div;
 }
 
 function displayEvent(div, event, hour2row) {
-    var id = div.attr('calid');
     var start = event.start.dateTime.substr(11,5);
     var end = event.end.dateTime.substr(11,5);
     var day = parseInt(event.start.dateTime.substr(8,2)) - 11 + 1;

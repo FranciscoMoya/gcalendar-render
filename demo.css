@@ -15,6 +15,7 @@ button { position: relative; float:right; }
 .room { font: 12px Arial, sans-serif; position: absolute; bottom: 5px; right: 5px;}
 
 @media print {
-    .calendar { page-break-inside: avoid;}
-    button { display: none !important;}
+    .calendar { page-break-inside: avoid; }
+    .person-calendar { page-break-inside: avoid; }
+    button { display: none !important; }
 }
