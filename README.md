@@ -28,6 +28,6 @@ python -m http.server
 
 * Si has seguido el paso anterior tendrás la aplicación en las siguientes URL:
 
-  [Demostración de calendario de semestre](http://rawgit.com/FranciscoMoya/gcalendar-render/master/demo.html)
+  [Demostración de calendario de semestre](http://rawgit.com/FranciscoMoya/gcalendar-render/master/all.html)
   
   [Demostración de calendario de personas](http://rawgit.com/FranciscoMoya/gcalendar-render/master/person.html)
