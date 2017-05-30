@@ -39,12 +39,30 @@ function updateSigninStatus(isSignedIn) {
 }
 
 function displayCalendars() {
+    jQuery('.person-calendar').each( (i, e) => {
+        var div = jQuery(e);
+        console.log(div.attr('instructor'));
+        var instructor = div.attr('instructor');
+        var ids = div.attr('calids').split(' ');
+        var dates = parseDates(div.attr('dates'));
+        div.replaceWith(calendarPeriodSelector(renderPersonCalendarPeriods(instructor, ids, dates)));
+    });
+    
     jQuery('.calendar').each( (i, e) => {
         var div = jQuery(e);
         var ids = div.attr('calids').split(' ');
-        var dates = JSON.parse(div.attr('dates'));
+        var dates = parseDates(div.attr('dates'));
         div.replaceWith(calendarPeriodSelector(renderAllCalendarPeriods(ids, dates)));
     });
+}
+
+function parseDates(s) {
+    var dates = {};
+    s.split(',').forEach(x => {
+        var xx = x.split('|');
+        dates[xx[0]] = xx[1];
+    });
+    return dates;
 }
 
 function calendarPeriodSelector(periods) {
@@ -68,6 +86,16 @@ function showOnly(objs, selection) {
     });
 }
 
+function renderPersonCalendarPeriods(instructor, ids, dates) {
+    var all = [];
+    for (var period in dates) {
+        var obj = renderPersonCalendar(instructor, ids, dates[period]);
+        obj.title = period;
+        all.push(obj);
+    }
+    return all;
+}
+
 function renderAllCalendarPeriods(ids, dates) {
     var all = [];
     for (var period in dates) {
@@ -84,6 +112,22 @@ function calendarIdSelector(cal) {
     return div;
 }
 
+function renderPersonCalendar(instructor, ids, datestr) {
+    var datetime = datestr.split(' ');
+    var date = datetime[0];
+    var time = datetime[1];
+    var div = personCalendarTemplate(instructor, time);
+    ids.forEach( id => {
+        gapi.client.calendar.calendars.get({
+            'calendarId': id + '@group.calendar.google.com'
+        }).then(response => {
+            var course = response.result.summary
+            renderEvents(id, date, time, displayPersonEvent(instructor, course, div, date));
+        });
+    });
+    return div;
+}
+
 function renderAllCalendars(ids, date) {
     var all = [];
     ids.forEach( id => {
@@ -96,12 +140,65 @@ function renderCalendar(id, datestr) {
     var datetime = datestr.split(' ');
     var date = datetime[0];
     var time = datetime[1];
-    return renderCalendarEvents(id, date, time);
+    var div = calendarTemplate(id, time);
+    renderEvents(id, date, time, displayCalendarEvent(div, date));
+    return div;
 }
 
-function renderCalendarEvents(id, date, time) {
-    var div = calendarTemplate(id, time);
+function displayCalendarEvent(div, date) {
     var hour2row = buildHour2Row(div);
+
+    return event => {
+        var start = event.start.dateTime.substr(11,5);
+        var end = event.end.dateTime.substr(11,5);
+        var day = parseInt(event.start.dateTime.substr(8,2)) - parseInt(date.substr(8,2)) + 1;
+        var hour = hour2row[start];
+        var span = parseInt(end.substr(0,2)) - parseInt(start.substr(0,2));
+
+        if (hour === undefined) return;
+    
+        div.find('table tr:eq('+ hour.toString() +') td:eq(' + day.toString() + ')')
+            .attr('rowspan', span.toString()).attr('class', 'event')
+            .append(jQuery('<div/>').attr('class','subject').html(event.summary))
+            .append(jQuery('<div/>').attr('class','room').html(event.location))
+            .append(jQuery('<div/>').attr('class','instructor').html(event.description.replace(/\n/g,'<br/>')))
+            .show();
+
+        for (var i=1; i<span; ++i)
+            div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').hide();
+    }
+}
+
+function displayPersonEvent(instructor, course, div, date) {
+    var hour2row = buildHour2Row(div);
+
+    return event => {
+        var start = event.start.dateTime.substr(11,5);
+        var end = event.end.dateTime.substr(11,5);
+        var day = parseInt(event.start.dateTime.substr(8,2)) - parseInt(date.substr(8,2)) + 1;
+        var hour = hour2row[start];
+        var span = parseInt(end.substr(0,2)) - parseInt(start.substr(0,2));
+
+        console.log(start, end, day, hour, span);
+        if (hour === undefined || !findInstructor(event.description.split('\n'), instructor)) return;
+    
+        div.find('table tr:eq('+ hour.toString() +') td:eq(' + day.toString() + ')')
+            .attr('rowspan', span.toString()).attr('class', 'event')
+            .append(jQuery('<div/>').attr('class','subject').html(event.summary))
+            .append(jQuery('<div/>').attr('class','room').html(event.location))
+            .append(jQuery('<div/>').attr('class','course').html(course))
+            .show();
+
+        for (var i=1; i<span; ++i)
+            div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').hide();
+    }
+}
+
+function findInstructor(all, instructor) {
+    return all.indexOf(instructor) != -1;
+}
+
+function renderEvents(id, date, time, displayEvent) {
     var start = new Date(date);
     var end = new Date();
     end.setTime(start.getTime() + MILLISECONDS_IN_A_WEEK);
@@ -113,11 +210,14 @@ function renderCalendarEvents(id, date, time) {
         'singleEvents': true
     }).then(response => {
         var events = response.result.items;
-        for (var i = 0; i < events.length; i++) {
-            displayEvent(div, events[i], hour2row);
-        }
+        events.forEach(ev => { displayEvent(ev); });
     });
-    return div;
+}
+
+function personCalendarTemplate(instructor, time) {
+    return jQuery('<div/>')
+        .append(jQuery('<h2/>').html(instructor))
+        .append(weekTemplate(time));
 }
 
 function calendarTemplate(id, time) {
@@ -181,20 +281,3 @@ function displayTitle(id, div) {
     return div;
 }
 
-function displayEvent(div, event, hour2row) {
-    var start = event.start.dateTime.substr(11,5);
-    var end = event.end.dateTime.substr(11,5);
-    var day = parseInt(event.start.dateTime.substr(8,2)) - 11 + 1;
-    var hour = hour2row[start];
-    var span = parseInt(end.substr(0,2)) - parseInt(start.substr(0,2));
-
-    if (hour === undefined) return;
-    
-    var box = div.find('table tr:eq('+ hour.toString() +') td:eq(' + day.toString() + ')');
-    box.empty();
-    box.html('<div class="subject">' + event.summary + '</div>'
-             + '<div class="room">' + event.location + '</div>'
-             + '<div class="instructor">' + event.description.replace(/\n/g,'<br/>') + '</div>' );
-    box.attr('rowspan', span.toString());
-    box.show()
-}
