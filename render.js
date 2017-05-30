@@ -1,6 +1,6 @@
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
-var MILLISECONDS_IN_A_WEEK = 432000000
+var MILLISECONDS_IN_A_WEEK = 432000000;
 
 var authorizeButton = document.getElementById('authorize-button');
 var signoutButton = document.getElementById('signout-button');
