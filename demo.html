@@ -15,10 +15,11 @@
       <pre>var CLIENT_ID = 'XXXXXX.apps.googleusercontent.com';</pre>
       <p>Usa la <a href="https://console.developers.google.com">consola de Google</a>
         para obtener tu propio Id de cliente de Oauth (pestaña <em>Credentials</em>).</p>
+      <p>Después sirve el archivo usando: <tt>python -m http.server</tt></p>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="cred.js" type="text/javascript"></script><!-- Defines CLIENT_ID -->
+    <script src="http://localhost:8000/cred.js" type="text/javascript"></script><!-- Defines CLIENT_ID -->
     <script src="render.js" type="text/javascript"></script>
 
     <script async defer src="https://apis.google.com/js/api.js"
