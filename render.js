@@ -41,18 +41,17 @@ function updateSigninStatus(isSignedIn) {
 function displayCalendars() {
     jQuery('.person-calendar').each( (i, e) => {
         var div = jQuery(e);
-        console.log(div.attr('instructor'));
         var instructor = div.attr('instructor');
         var ids = div.attr('calids').split(' ');
         var dates = parseDates(div.attr('dates'));
-        div.replaceWith(calendarPeriodSelector(renderPersonCalendarPeriods(instructor, ids, dates)));
+        div.empty().append(calendarPeriodSelector(renderPersonCalendarPeriods(instructor, ids, dates)));
     });
     
     jQuery('.calendar').each( (i, e) => {
         var div = jQuery(e);
         var ids = div.attr('calids').split(' ');
         var dates = parseDates(div.attr('dates'));
-        div.replaceWith(calendarPeriodSelector(renderAllCalendarPeriods(ids, dates)));
+        div.empty().append(calendarPeriodSelector(renderAllCalendarPeriods(ids, dates)));
     });
 }
 
@@ -130,9 +129,7 @@ function renderPersonCalendar(instructor, ids, datestr) {
 
 function renderAllCalendars(ids, date) {
     var all = [];
-    ids.forEach( id => {
-        all.push(renderCalendar(id, date));
-    });
+    ids.forEach( id => { all.push(renderCalendar(id, date)); });
     return all;
 }
 
@@ -179,7 +176,6 @@ function displayPersonEvent(instructor, course, div, date) {
         var hour = hour2row[start];
         var span = parseInt(end.substr(0,2)) - parseInt(start.substr(0,2));
 
-        console.log(start, end, day, hour, span);
         if (hour === undefined || !findInstructor(event.description.split('\n'), instructor)) return;
     
         div.find('table tr:eq('+ hour.toString() +') td:eq(' + day.toString() + ')')
