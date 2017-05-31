@@ -166,10 +166,12 @@ function displayCalendarEvent(div, date) {
             .append(jQuery('<div/>').attr('class','instructor').html(event.description.replace(/\n/g,'<br/>')))
             .show();
         var current_span = parseInt(box.attr('rowspan')) || 1;
-        box.attr('rowspan', Math.max(span, current_span).toString());
+        box.attr('rowspan', Math.max(span, current_span));
 
-        for (var i=1; i<span; ++i)
-            div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').attr('overlap', 'true').hide();
+        for (var i=1; i<span; ++i) {
+            var overlap = div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').attr('overlap', 'true').hide();
+            box.append(overlap.children());
+        }
     }
 }
 
@@ -182,9 +184,9 @@ function displayPersonEvent(instructor, course, div, date) {
         var day = parseInt(event.start.dateTime.substr(8,2)) - parseInt(date.substr(8,2)) + 1;
         var hour = hour2row[start];
         var span = parseInt(end.substr(0,2)) - parseInt(start.substr(0,2));
-        //console.log(course, event.summary, start, end);
 
         if (hour === undefined || !findInstructor(event.description.split('\n'), instructor)) return;
+        console.log(course, event.summary, day, start, end);
     
         var box = null;
         for (var i = hour; i >= 0; --i) {
@@ -197,10 +199,12 @@ function displayPersonEvent(instructor, course, div, date) {
             .append(jQuery('<div/>').attr('class','course').html(course))
             .show();
         var current_span = parseInt(box.attr('rowspan')) || 1;
-        box.attr('rowspan', Math.max(span, current_span).toString());
+        box.attr('rowspan', Math.max(span, current_span));
 
-        for (var i=1; i<span; ++i)
-            div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').attr('overlap', 'true').hide();
+        for (var i=1; i<span; ++i) {
+            var overlap = div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').attr('overlap', 'true').hide();
+            box.append(overlap.children());
+        }
     }
 }
 
