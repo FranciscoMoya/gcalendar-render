@@ -121,7 +121,9 @@ function renderPersonCalendar(instructor, ids, datestr) {
             'calendarId': id + '@group.calendar.google.com'
         }).then(response => {
             var course = response.result.summary
-            renderEvents(id, date, time, displayPersonEvent(instructor, course, div, date));
+            renderEvents(id, date, time,
+                         displayPersonEvent(instructor, course, div, date))
+                .then(() => { aggregateRooms(div); });
         });
     });
     return div;
@@ -138,24 +140,31 @@ function renderCalendar(id, datestr) {
     var date = datetime[0];
     var time = datetime[1];
     var div = calendarTemplate(id, time);
-    renderEvents(id, date, time, displayCalendarEvent(div, date));
+    renderEvents(id, date, time, displayCalendarEvent(div, date))
+        .then(() => { aggregateRooms(div); });
     return div;
 }
 
 function displayCalendarEvent(div, date) {
     return displayEvent(div, date,
                         _ => { return true; },
-                        (ev, div) => { div.append(jQuery('<div/>').attr('class','subject').html(ev.summary))
+                        (ev, div) => {
+                            div.append(jQuery('<div/>').attr('class','event')
+                                       .append(jQuery('<div/>').attr('class','subject').html(ev.summary))
                                        .append(jQuery('<div/>').attr('class','room').html(ev.location))
-                                       .append(jQuery('<div/>').attr('class','instructor').html(ev.description.replace(/\n/g,'<br/>'))); });
+                                       .append(jQuery('<div/>').attr('class','instructor').html(ev.description.replace(/\n/g,'<br/>'))));
+                        });
 }
 
 function displayPersonEvent(instructor, course, div, date) {
     return displayEvent(div, date,
                         ev => { return findInstructor(ev.description.split('\n'), instructor); },
-                        (ev, div) => { div.append(jQuery('<div/>').attr('class','subject').html(ev.summary))
+                        (ev, div) => {
+                            div.append(jQuery('<div/>').attr('class','event')
+                                       .append(jQuery('<div/>').attr('class','subject').html(ev.summary))
                                        .append(jQuery('<div/>').attr('class','room').html(ev.location))
-                                       .append(jQuery('<div/>').attr('class','course').html(course)); });
+                                       .append(jQuery('<div/>').attr('class','course').html(course)));
+                        });
 }
 
 function displayEvent(div, date, validEvent, renderEvent) {
@@ -173,7 +182,7 @@ function displayEvent(div, date, validEvent, renderEvent) {
     
         var box = null;
         for (var i = hour; i >= 0; --i) {
-            box = div.find('table tr:eq('+ i.toString() +') td:eq(' + day.toString() + ')')
+            box = div.find('table tr:eq('+ i +') td:eq(' + day + ')')
             if (!box.attr('overlap')) break;
         }
         var current_span = parseInt(box.attr('rowspan')) || 1;
@@ -181,7 +190,7 @@ function displayEvent(div, date, validEvent, renderEvent) {
         renderEvent(event, box);
 
         for (var i=1; i<span; ++i) {
-            var overlap = div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').attr('overlap', 'true').hide();
+            var overlap = div.find('table tr:eq('+ (hour+i) +') td:eq(' + day + ')').attr('overlap', 'true').hide();
             box.append(overlap.children());
         }
     }
@@ -195,7 +204,7 @@ function renderEvents(id, date, time, displayEvent) {
     var start = new Date(date);
     var end = new Date();
     end.setTime(start.getTime() + MILLISECONDS_IN_A_WEEK);
-    gapi.client.calendar.events.list({
+    return gapi.client.calendar.events.list({
         'calendarId': id + '@group.calendar.google.com',
         'timeMin': start.toISOString(),
         'timeMax': end.toISOString(),
@@ -204,6 +213,19 @@ function renderEvents(id, date, time, displayEvent) {
     }).then(response => {
         var events = response.result.items;
         events.forEach(ev => { displayEvent(ev); });
+    });
+}
+
+function aggregateRooms(div) {
+    div.find('td').each((i, e) => {
+        var td = jQuery(e);
+        var rooms = [];
+        td.find('div.event').each((i, e) => {
+            rooms.push(jQuery(e).find('.room').text());
+        });
+        var div = td.children('.rooms');
+        if (div.length < 1) div = jQuery('<div/>').attr('class', 'rooms');
+        div.html(rooms.join('+')).appendTo(td);
     });
 }
 
@@ -245,7 +267,7 @@ function timeSlots(time) {
 
 function nextSlot(t) {
     var h = 1 + parseInt(t.substr(0,2));
-    return ('00' + h.toString()).slice(-2) + t.slice(-3);
+    return ('00' + h).slice(-2) + t.slice(-3);
 }
 
 function weekRows(l) {

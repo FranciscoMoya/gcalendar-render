@@ -9,11 +9,13 @@ td { vertical-align: top; }
 td:not(:first-child) { width: 140px; position: relative; padding: 0px 5px; border: 1px dotted gray; }
 td:first-child { text-align:right; }
 td.event { border: 1px solid black; background-color: #eee; border-radius: 5px; }
+div.event { padding: 0 0 5px 0; }
 button { position: relative; float:right; }
 
 .subject { font: bold 14px Arial, sans-serif; }
 .course, .instructor { font: 12px Arial, sans-serif; }
-.room { font: 12px Arial, sans-serif; position: absolute; bottom: 5px; right: 5px; background-color: #eee; }
+.room { display:none; }
+.rooms { font: 12px Arial, sans-serif; position: absolute; bottom: 5px; right: 5px; }
 
 @media print {
     .calendar { page-break-inside: avoid; }
