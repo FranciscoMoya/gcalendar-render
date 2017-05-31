@@ -13,7 +13,7 @@ button { position: relative; float:right; }
 
 .subject { font: bold 14px Arial, sans-serif; }
 .course, .instructor { font: 12px Arial, sans-serif; }
-.room { font: 12px Arial, sans-serif; position: absolute; bottom: 5px; right: 5px;}
+.room { font: 12px Arial, sans-serif; position: absolute; bottom: 5px; right: 5px; background-color: #eee; }
 
 @media print {
     .calendar { page-break-inside: avoid; }

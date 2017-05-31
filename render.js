@@ -178,15 +178,17 @@ function displayPersonEvent(instructor, course, div, date) {
 
         if (hour === undefined || !findInstructor(event.description.split('\n'), instructor)) return;
     
-        div.find('table tr:eq('+ hour.toString() +') td:eq(' + day.toString() + ')')
-            .attr('rowspan', span.toString()).attr('class', 'event')
+        var box = null;
+        for (var i = hour; i >= 0; --i) {
+            box = div.find('table tr:eq('+ i.toString() +') td:eq(' + day.toString() + ')')
+            if (box.is(':visible')) break;
+        }
+        box.attr('class', 'event');
             .append(jQuery('<div/>').attr('class','subject').html(event.summary))
             .append(jQuery('<div/>').attr('class','room').html(event.location))
             .append(jQuery('<div/>').attr('class','course').html(course))
             .show();
-
-        for (var i=1; i<span; ++i)
-            div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').hide();
+        box.attr('rowspan', Math.max(span, parseInt(box.attr('rowspan'))).toString());
     }
 }
 
@@ -203,6 +205,7 @@ function renderEvents(id, date, time, displayEvent) {
         'timeMin': start.toISOString(),
         'timeMax': end.toISOString(),
         'showDeleted': false,
+        'orderBy': 'startTime',
         'singleEvents': true
     }).then(response => {
         var events = response.result.items;
