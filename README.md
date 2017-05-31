@@ -14,20 +14,9 @@ queda más remedio que crearlo tú mismo.
   [consola de Google](https://console.developers.google.com), pestaña
   *Credentials*, añade un nuevo Id de cliente de Oauth.
 
-* Edita un archivo de nombre `cred.js` y escribe:
+``` 
+https://rawgit.com/FranciscoMoya/gcalendar-render/master/all.html?<id de cliente>
 
-``` javascript
-var CLIENT_ID = 'Pon aquí tu propio Id de cliente';
+https://rawgit.com/FranciscoMoya/gcalendar-render/master/person.html?<id de cliente>
 ```
 
-* Abre una consola (e.g. ejecuta Powershell) y sirve las páginas, por ejemplo con [python](http://python.org):
-
-```
-python -m http.server
-```
-
-* Si has seguido el paso anterior tendrás la aplicación en las siguientes URL:
-
-  [Demostración de calendario de semestre](http://rawgit.com/FranciscoMoya/gcalendar-render/master/all.html)
-  
-  [Demostración de calendario de personas](http://rawgit.com/FranciscoMoya/gcalendar-render/master/person.html)
