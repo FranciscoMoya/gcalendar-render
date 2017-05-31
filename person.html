@@ -11,14 +11,13 @@
     <button id="signout-button" style="display: none;">Sign Out</button>
 
     <div id="help-text" style="display:none;">
-      <p>Debes proporcionar un archivo con nombre <tt>cred.js</tt> que contiene un texto similar al siguiente:</p>
-      <pre>var CLIENT_ID = 'XXXXXX.apps.googleusercontent.com';</pre>
+      <p>Debes proporcionar tu propio Id de cliente Oauth como parámetro de la URL.</p>
       <p>Usa la <a href="https://console.developers.google.com">consola de Google</a>
         para obtener tu propio Id de cliente de Oauth (pestaña <em>Credentials</em>).</p>
+      <p>Después usa <tt>http://.../person.html?&lt;client id&gt;</tt></p>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://localhost:8000/cred.js" type="text/javascript"></script><!-- Defines CLIENT_ID -->
     <script src="render.js" type="text/javascript"></script>
 
     <script async defer src="https://apis.google.com/js/api.js"
@@ -37,7 +36,7 @@
           'M.T. Baeza', 'J.L. de la Peña', 'V. López-Arza'
       ];
       var calids = 'tmebusp73ue8s8n765kcc3lc88 b37j55fbfunn8h1jirddb1mpio hesd968am4c8f6vrrf414bnaa8';
-      var dates='Primer semestre |2017-09-11 08:30-14:30,Segundo semestre|2018-02-05 08:30-14:30';
+      var dates='Primer semestre|2017-09-11 08:30-14:30,Segundo semestre|2018-02-05 08:30-14:30';
       var people = [];
       profes.forEach( n => {
           var o = jQuery('<div/>').attr('class','person-calendar').attr('instructor',n).attr('calids', calids).attr('dates', dates);

@@ -11,7 +11,7 @@ function handleClientLoad() {
 }
 
 function initClient() {
-    if (window['CLIENT_ID'] === undefined)
+    if (!window['CLIENT_ID'])
         helpText.style.display = 'block';
     
     gapi.client.init({
@@ -151,18 +151,25 @@ function displayCalendarEvent(div, date) {
         var day = parseInt(event.start.dateTime.substr(8,2)) - parseInt(date.substr(8,2)) + 1;
         var hour = hour2row[start];
         var span = parseInt(end.substr(0,2)) - parseInt(start.substr(0,2));
+        //console.log(course, event.summary, start, end);
 
         if (hour === undefined) return;
     
-        div.find('table tr:eq('+ hour.toString() +') td:eq(' + day.toString() + ')')
-            .attr('rowspan', span.toString()).attr('class', 'event')
+        var box = null;
+        for (var i = hour; i >= 0; --i) {
+            box = div.find('table tr:eq('+ i.toString() +') td:eq(' + day.toString() + ')')
+            if (!box.attr('overlap')) break;
+        }
+        box.attr('class', 'event')
             .append(jQuery('<div/>').attr('class','subject').html(event.summary))
             .append(jQuery('<div/>').attr('class','room').html(event.location))
             .append(jQuery('<div/>').attr('class','instructor').html(event.description.replace(/\n/g,'<br/>')))
             .show();
+        var current_span = parseInt(box.attr('rowspan')) || 1;
+        box.attr('rowspan', Math.max(span, current_span).toString());
 
         for (var i=1; i<span; ++i)
-            div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').hide();
+            div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').attr('overlap', 'true').hide();
     }
 }
 
@@ -175,20 +182,25 @@ function displayPersonEvent(instructor, course, div, date) {
         var day = parseInt(event.start.dateTime.substr(8,2)) - parseInt(date.substr(8,2)) + 1;
         var hour = hour2row[start];
         var span = parseInt(end.substr(0,2)) - parseInt(start.substr(0,2));
+        //console.log(course, event.summary, start, end);
 
         if (hour === undefined || !findInstructor(event.description.split('\n'), instructor)) return;
     
         var box = null;
         for (var i = hour; i >= 0; --i) {
             box = div.find('table tr:eq('+ i.toString() +') td:eq(' + day.toString() + ')')
-            if (box.is(':visible')) break;
+            if (!box.attr('overlap')) break;
         }
-        box.attr('class', 'event');
+        box.attr('class', 'event')
             .append(jQuery('<div/>').attr('class','subject').html(event.summary))
             .append(jQuery('<div/>').attr('class','room').html(event.location))
             .append(jQuery('<div/>').attr('class','course').html(course))
             .show();
-        box.attr('rowspan', Math.max(span, parseInt(box.attr('rowspan'))).toString());
+        var current_span = parseInt(box.attr('rowspan')) || 1;
+        box.attr('rowspan', Math.max(span, current_span).toString());
+
+        for (var i=1; i<span; ++i)
+            div.find('table tr:eq('+ (hour+i).toString() +') td:eq(' + day.toString() + ')').attr('overlap', 'true').hide();
     }
 }
 
