@@ -1,0 +1,57 @@
+body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    font-size: 14px;
+}
+
+#loading {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#calendar {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+td.fc-axis {
+    height: 35px !important;
+}
+
+.fc {
+    margin-bottom: 10px;
+}
+
+.fc-title {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.fc-instructor {
+    font-size: .9em;
+    padding: 0 5px;
+}
+
+.fc-location {
+    position: absolute;
+    bottom: 3px; right: 3px;
+}
+
+.fc-content .fc-time { display:none; }
+
+.fc-event { padding: 0 3px; }
+
+.ev-src-0, .ev-src-1, .ev-src-2, .ev-src-3, .ev-src-4, .ev-src-5, .ev-src-6 {
+    color: black;
+}
+
+.ev-src-0 { background-color: #ECA; }
+.ev-src-1 { background-color: #ADD; }
+.ev-src-2 { background-color: #FB2; }
+.ev-src-3 { background-color: #6E8B3D; }
+.ev-src-4 { background-color: #ee0; }
+.ev-src-5 { background-color: #e0e; }
+.ev-src-6 { background-color: #0ee; }
