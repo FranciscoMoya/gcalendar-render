@@ -14,13 +14,27 @@
 <script src='full.js'></script>
 
 <script>
-  var calids = {
-    '1ºA': 'tmebusp73ue8s8n765kcc3lc88@group.calendar.google.com',
-    '1ºB': 'b37j55fbfunn8h1jirddb1mpio@group.calendar.google.com', 
-    '1ºC': 'hesd968am4c8f6vrrf414bnaa8@group.calendar.google.com'
+  var calendars = {
+    ids: {
+      '1ºA': 'tmebusp73ue8s8n765kcc3lc88@group.calendar.google.com',
+      '1ºB': 'b37j55fbfunn8h1jirddb1mpio@group.calendar.google.com', 
+      '1ºC': 'hesd968am4c8f6vrrf414bnaa8@group.calendar.google.com'
+    },
+    periods: {
+      'Primer semestre':  {
+        defaultDate: '2017-09-11',
+        minTime: '08:00',
+        maxTime: '15:00'
+      },
+      'Segundo semestre': {
+        defaultDate: '2018-02-05',
+        minTime: '08:00',
+        maxTime: '15:00'
+      },
+    }
   };
-
-  $(document).ready(() => { displayCalendars($('#calendar'), calids); });
+  
+  $(document).ready(() => { displayPeriodCalendars($('#calendar'), calendars); });
 </script>
 
 </head>

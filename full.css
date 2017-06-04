@@ -46,12 +46,21 @@ td.fc-axis {
 
 .ev-src-0, .ev-src-1, .ev-src-2, .ev-src-3, .ev-src-4, .ev-src-5, .ev-src-6 {
     color: black;
+    border-color: gray;
 }
 
-.ev-src-0 { background-color: #ECA; }
-.ev-src-1 { background-color: #ADD; }
-.ev-src-2 { background-color: #FB2; }
-.ev-src-3 { background-color: #6E8B3D; }
+.ev-src-0 { background-color: #eee; }
+.ev-src-1 { background-color: #add; }
+.ev-src-2 { background-color: #fb0; }
+.ev-src-3 { background-color: #7b0; }
 .ev-src-4 { background-color: #ee0; }
 .ev-src-5 { background-color: #e0e; }
 .ev-src-6 { background-color: #0ee; }
+
+.ev-src-0:hover { background-color: #AAA; }
+.ev-src-1:hover { background-color: #ADD; }
+.ev-src-2:hover { background-color: #FB2; }
+.ev-src-3:hover { background-color: #6E8B3D; }
+.ev-src-4:hover { background-color: #ee0; }
+.ev-src-5:hover { background-color: #e0e; }
+.ev-src-6:hover { background-color: #0ee; }

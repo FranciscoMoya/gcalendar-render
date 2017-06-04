@@ -1,28 +1,52 @@
-function displayCalendars(div, ids) {
+function displayPeriodCalendars(div, calendars) {
     var cals = [];
-    Object.keys(ids).forEach(id => {
-        var cal = $('<div/>').attr('id',ids[id].split('@')).appendTo(div);
-        displayCalendar(cal, ids, id.split(','));
-        cal.title = id;
+    Object.keys(calendars.periods).forEach(period => {
+        var cal = $('<div/>').appendTo(div);
+        cal.title = period;
+        displayPeriodCalendar(cal, calendars.ids, calendars.periods[period]);
         cals.push(cal);
     });
     div.prepend(selectorWidget(cals));
 }
 
-function displayCalendar(div, ids, sources) {
-    div.fullCalendar({
+function displayPeriodCalendar(div, ids, options) {
+    var cals = [];
+    Object.keys(ids).forEach(id => {
+        var cal = $('<div/>').attr('id',ids[id].split('@')).appendTo(div);
+        displayCalendar(cal, ids, id.split(','), options);
+        cal.title = id;
+        cals.push(cal);
+    });
+    return cals;
+}
+
+
+function displayCalendars(div, ids) {
+    var options = {
+        defaultDate: '2017-09-11',
+        allDaySlot: true,
         header: {
-            left: 'title',
-            center: 'prev,next today',
+            left: 'prev,next today',
+            center: 'title',
             right: 'agendaDay,agendaWeek,month'
         },
-        defaultDate: '2017-09-11',
+        columnFormat: 'ddd M/D',
+        minTime: '08:00',
+        maxTime: '21:00',
+        navLinks: true
+    };
+    var cals = displayPeriodCalendar(div, ids, options);
+    div.prepend(selectorWidget(cals));
+}
+
+function displayCalendar(div, ids, sources, options) {
+    var settings = {
+        header: false,
+        allDaySlot: false,
+        columnFormat: 'ddd',
         defaultView: 'agendaWeek',
         slotLabelFormat: 'HH:mm',
         locale: 'es',
-        minTime: '08:00',
-        maxTime: '21:00',
-        navLinks: true,
         editable: false,
         weekends: false,
         googleCalendarApiKey: location.search.substr(1),
@@ -39,7 +63,11 @@ function displayCalendar(div, ids, sources) {
         loading: function(bool) {
             $('#loading').toggle(bool);
         }  
-    }).prepend($('<h1/>').html(sources.join(',')));
+    };
+    if (options)
+        for (var i in options)
+            settings[i] = options[i];
+    div.fullCalendar(settings).prepend($('<h1/>').html(sources.join(',')));
 }
 
 function getEvSources(ids, sources) {
