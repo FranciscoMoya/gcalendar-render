@@ -1,3 +1,37 @@
+function displayAllInstructorsCalendars(div, calendars, instructors) {
+    var cals = [];
+    instructors.forEach(name => {
+        var cal = $('<div/>').appendTo(div);
+        cal.title = name;
+        displayInstructorCalendar(cal, calendars, name);
+        cals.push(cal);
+    });
+    div.prepend(selectorWidget(cals));
+}
+
+function displayInstructorCalendar(div, calendars, name) {
+    var options = {
+        eventRender: function (event, element) {
+            if (!findInstructor(event.description.split('\n'), name))
+                return false;
+            element.append($('<div class="fc-course"/>').html(event.source.displayName))
+                .append($('<div class="fc-location"/>').html(event.location));
+        }
+    };
+    var cals = [];
+    Object.keys(calendars.periods).forEach(period => {
+        var cal = $('<div/>').appendTo(div);
+        cal.title = period;
+        displayCalendar(cal, calendars.ids, Object.keys(calendars.ids),
+                        mergeOptions(calendars.periods[period], options));
+        cals.push(cal);
+    });
+}
+
+function findInstructor(all, instructor) {
+    return all.indexOf(instructor) != -1;
+}
+
 function displayPeriodCalendars(div, calendars) {
     var cals = [];
     Object.keys(calendars.periods).forEach(period => {
@@ -33,7 +67,8 @@ function displayCalendars(div, ids) {
         columnFormat: 'ddd M/D',
         minTime: '08:00',
         maxTime: '21:00',
-        navLinks: true
+        navLinks: true,
+        height: undefined
     };
     var cals = displayPeriodCalendar(div, ids, options);
     div.prepend(selectorWidget(cals));
@@ -42,6 +77,7 @@ function displayCalendars(div, ids) {
 function displayCalendar(div, ids, sources, options) {
     var settings = {
         header: false,
+        height: 'auto',
         allDaySlot: false,
         columnFormat: 'ddd',
         defaultView: 'agendaWeek',
@@ -64,10 +100,15 @@ function displayCalendar(div, ids, sources, options) {
             $('#loading').toggle(bool);
         }  
     };
-    if (options)
-        for (var i in options)
-            settings[i] = options[i];
-    div.fullCalendar(settings).prepend($('<h1/>').html(sources.join(',')));
+    mergeOptions(settings, options);
+    div.fullCalendar(settings).prepend($('<h1/>').html(div.title || sources.join(',')));
+}
+
+function mergeOptions(dest, orig) {
+    if (orig)
+        for (var i in orig)
+            dest[i] = orig[i];
+    return dest;
 }
 
 function getEvSources(ids, sources) {
@@ -75,7 +116,8 @@ function getEvSources(ids, sources) {
     sources.forEach( (id, i) => {
         src.push({
             googleCalendarId: ids[id],
-            className: 'ev-src-' + i 
+            className: 'ev-src-' + i,
+            displayName: id
         });
     });
     return src;
