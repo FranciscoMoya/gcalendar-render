@@ -12,7 +12,7 @@ function displayAllSubjectsCalendars(div, calendars, subjects) {
 function displaySubjectCalendar(div, calendars, name) {
     var options = {
         eventRender: function (event, element) {
-            if (!findName(event.source.displayName.split('Lab. '), name))
+            if (!event.source.displayName || !findName(event.source.displayName.split('Lab. '), name))
                 return false;
             element.append($('<div class="fc-course"/>').html(event.source.displayName))
                 .append($('<div class="fc-location"/>').html(event.location));
