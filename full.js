@@ -1,18 +1,18 @@
-function displayAllInstructorsCalendars(div, calendars, instructors) {
+function displayAllSubjectsCalendars(div, calendars, subjects) {
     var cals = [];
-    instructors.forEach(name => {
+    subjects.forEach(name => {
         var cal = $('<div/>').appendTo(div);
         cal.title = name;
-        displayInstructorCalendar(cal, calendars, name);
+        displaySubjectCalendar(cal, calendars, name);
         cals.push(cal);
     });
     div.prepend(selectorWidget(cals));
 }
 
-function displayInstructorCalendar(div, calendars, name) {
+function displaySubjectCalendar(div, calendars, name) {
     var options = {
         eventRender: function (event, element) {
-            if (!findInstructor(event.description.split('\n'), name))
+            if (!findName(event.source.displayName.split('Lab. '), name))
                 return false;
             element.append($('<div class="fc-course"/>').html(event.source.displayName))
                 .append($('<div class="fc-location"/>').html(event.location));
@@ -28,8 +28,38 @@ function displayInstructorCalendar(div, calendars, name) {
     });
 }
 
-function findInstructor(all, instructor) {
-    return all.indexOf(instructor) != -1;
+function displayAllInstructorsCalendars(div, calendars, instructors) {
+    var cals = [];
+    instructors.forEach(name => {
+        var cal = $('<div/>').appendTo(div);
+        cal.title = name;
+        displayInstructorCalendar(cal, calendars, name);
+        cals.push(cal);
+    });
+    div.prepend(selectorWidget(cals));
+}
+
+function displayInstructorCalendar(div, calendars, name) {
+    var options = {
+        eventRender: function (event, element) {
+            if (!findName(event.description.split('\n'), name))
+                return false;
+            element.append($('<div class="fc-course"/>').html(event.source.displayName))
+                .append($('<div class="fc-location"/>').html(event.location));
+        }
+    };
+    var cals = [];
+    Object.keys(calendars.periods).forEach(period => {
+        var cal = $('<div/>').appendTo(div);
+        cal.title = period;
+        displayCalendar(cal, calendars.ids, Object.keys(calendars.ids),
+                        mergeOptions(calendars.periods[period], options));
+        cals.push(cal);
+    });
+}
+
+function findName(all, name) {
+    return all.indexOf(name) != -1;
 }
 
 function displayPeriodCalendars(div, calendars) {
