@@ -1,6 +1,6 @@
 function displayAllSubjectsCalendars(div, calendars, subjects) {
     var cals = [];
-    subjects.forEach(name => {
+    subjects.forEach(function (name) {
         var cal = $('<div/>').appendTo(div);
         cal.title = name;
         displaySubjectCalendar(cal, calendars, name);
@@ -19,7 +19,7 @@ function displaySubjectCalendar(div, calendars, name) {
         }
     };
     var cals = [];
-    Object.keys(calendars.periods).forEach(period => {
+    Object.keys(calendars.periods).forEach(function (period) {
         var cal = $('<div/>').appendTo(div);
         cal.title = period;
         displayCalendar(cal, calendars.ids, Object.keys(calendars.ids),
@@ -30,7 +30,7 @@ function displaySubjectCalendar(div, calendars, name) {
 
 function displayAllInstructorsCalendars(div, calendars, instructors) {
     var cals = [];
-    instructors.forEach(name => {
+    instructors.forEach(function (name) {
         var cal = $('<div/>').appendTo(div);
         cal.title = name;
         displayInstructorCalendar(cal, calendars, name);
@@ -49,7 +49,7 @@ function displayInstructorCalendar(div, calendars, name) {
         }
     };
     var cals = [];
-    Object.keys(calendars.periods).forEach(period => {
+    Object.keys(calendars.periods).forEach(function (period) {
         var cal = $('<div/>').appendTo(div);
         cal.title = period;
         displayCalendar(cal, calendars.ids, Object.keys(calendars.ids),
@@ -64,7 +64,7 @@ function findName(all, name) {
 
 function displayPeriodCalendars(div, calendars) {
     var cals = [];
-    Object.keys(calendars.periods).forEach(period => {
+    Object.keys(calendars.periods).forEach(function (period) {
         var cal = $('<div/>').appendTo(div);
         cal.title = period;
         displayPeriodCalendar(cal, calendars.ids, calendars.periods[period]);
@@ -75,7 +75,7 @@ function displayPeriodCalendars(div, calendars) {
 
 function displayPeriodCalendar(div, ids, options) {
     var cals = [];
-    Object.keys(ids).forEach(id => {
+    Object.keys(ids).forEach(function (id) {
         var cal = $('<div/>').attr('id',ids[id].split('@')).appendTo(div);
         displayCalendar(cal, ids, id.split(','), options);
         cal.title = id;
@@ -143,7 +143,7 @@ function mergeOptions(dest, orig) {
 
 function getEvSources(ids, sources) {
     var src = [];
-    sources.forEach( (id, i) => {
+    sources.forEach( function (id, i) {
         src.push({
             googleCalendarId: ids[id],
             className: 'ev-src-' + i,
@@ -155,14 +155,14 @@ function getEvSources(ids, sources) {
 
 function selectorWidget(objs) {
     var sel = jQuery('<select/>');
-    objs.forEach( (o,i) => { sel.append(jQuery('<option/>').attr('value', i).html(o.title)); });
-    sel.change( _ => { showOnly(objs, sel.val()); });
+    objs.forEach( function (o,i) { sel.append(jQuery('<option/>').attr('value', i).html(o.title)); });
+    sel.change( function (_) { showOnly(objs, sel.val()); });
     showOnly(objs, 0);
     return sel;
 }
 
 function showOnly(objs, selection) {
-    objs.forEach( (o, i) => {
+    objs.forEach( function (o, i) {
         if (i != selection) o.hide();
         else o.show();
     });
