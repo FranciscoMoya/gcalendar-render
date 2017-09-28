@@ -49,18 +49,18 @@ td.fc-axis {
     border-color: gray;
 }
 
-.ev-src-0 { background-color: #eee; }
-.ev-src-1 { background-color: #add; }
-.ev-src-2 { background-color: #fb0; }
-.ev-src-3 { background-color: #7b0; }
-.ev-src-4 { background-color: #ee0; }
-.ev-src-5 { background-color: #e0e; }
-.ev-src-6 { background-color: #0ee; }
+.ev-src-0 { background-color: #ffb3ba; }
+.ev-src-1 { background-color: #ffdfba; }
+.ev-src-2 { background-color: #ffffba; }
+.ev-src-3 { background-color: #baffc9; }
+.ev-src-4 { background-color: #bae1ff; }
+.ev-src-5 { background-color: #f1cbff; }
+.ev-src-6 { background-color: #ffffff; }
 
-.ev-src-0:hover { background-color: #AAA; }
-.ev-src-1:hover { background-color: #ADD; }
-.ev-src-2:hover { background-color: #FB2; }
-.ev-src-3:hover { background-color: #6E8B3D; }
-.ev-src-4:hover { background-color: #ee0; }
-.ev-src-5:hover { background-color: #e0e; }
-.ev-src-6:hover { background-color: #0ee; }
+.ev-src-0:hover { background-color: #efa3aa; }
+.ev-src-1:hover { background-color: #efcfaa; }
+.ev-src-2:hover { background-color: #efefaa; }
+.ev-src-3:hover { background-color: #aaefb9; }
+.ev-src-4:hover { background-color: #aad1ef; }
+.ev-src-5:hover { background-color: #e1bbef; }
+.ev-src-6:hover { background-color: #efefef; }
