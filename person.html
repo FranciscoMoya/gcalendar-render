@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Horarios 2017-2018</title>
+    <title>Horarios 2018-2019</title>
     <link rel="stylesheet" type="text/css" href="demo.css" />
     <meta charset='utf-8' />
   </head>
@@ -34,13 +34,16 @@
     <script>
       var profes = [
           'F. Moya', 'J. Moreno',
-          'J. Rosado', 'S. Vega', 'J. Cerezo', 'F. Andrés', 'L. Rodríguez',
-          'A. Díaz', 'J.A. Samper', 'Nuevo',
+          //'J. Rosado', 'S. Vega', 'J. Cerezo', 'F. Andrés', 'L. Rodríguez',
+          'Dpto. Matemáticas',
+          //'A. Díaz', 'J.A. Samper', 'Nuevo',
+          'Dpto. Física',
           'R. Elvira', 'M.A. Rojas',
-          'M.T. Baeza', 'J.L. de la Peña', 'V. López-Arza'
+          //'M.T. Baeza', 'J.L. de la Peña', 'V. López-Arza'
+          'Dpto. Química'
       ];
       var calids = 'tmebusp73ue8s8n765kcc3lc88 b37j55fbfunn8h1jirddb1mpio hesd968am4c8f6vrrf414bnaa8';
-      var dates='Primer semestre|2017-09-18 08:30-14:30,Segundo semestre|2018-02-05 08:30-14:30';
+      var dates='Primer semestre|2018-09-10 08:30-14:30,Segundo semestre|2019-02-04 08:30-14:30';
       var people = [];
       profes.forEach( function (n) {
           var o = jQuery('<div/>').attr('class','person-calendar').attr('instructor',n).attr('calids', calids).attr('dates', dates);
