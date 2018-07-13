@@ -87,7 +87,7 @@ function displayPeriodCalendar(div, ids, options) {
 
 function displayCalendars(div, ids) {
     var options = {
-        defaultDate: '2017-09-11',
+        defaultDate: '2018-09-10',
         allDaySlot: true,
         header: {
             left: 'prev,next today',
