@@ -169,7 +169,7 @@ function showOnly(objs, selection) {
 }
 
 function getApiKey(url_string) {
-    return getParam(url_string, "key") || url.split('?')[1]
+    return getParam(url_string, "key") || url_string.split('?')[1]
 }
 
 function getParam(url_string, kw) {
