@@ -115,7 +115,7 @@ function displayCalendar(div, ids, sources, options) {
         locale: 'es',
         editable: false,
         weekends: false,
-        googleCalendarApiKey: getApiKey(location.search),
+        googleCalendarApiKey: getApiKey(location.href),
         eventSources: getEvSources(ids, sources),
         currentTimezone: 'Europe/Madrid',
         eventClick: function(event) {
