@@ -115,7 +115,7 @@ function displayCalendar(div, ids, sources, options) {
         locale: 'es',
         editable: false,
         weekends: false,
-        googleCalendarApiKey: location.search.substr(1),
+        googleCalendarApiKey: getApiKey(location.search),
         eventSources: getEvSources(ids, sources),
         currentTimezone: 'Europe/Madrid',
         eventClick: function(event) {
@@ -166,4 +166,13 @@ function showOnly(objs, selection) {
         if (i != selection) o.hide();
         else o.show();
     });
+}
+
+function getApiKey(url_string) {
+    return getParam(url_string, "key") || url.split('?')[1]
+}
+
+function getParam(url_string, kw) {
+    var url = new URL(url_string);
+    return url.searchParams.get(kw);
 }
