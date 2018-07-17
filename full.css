@@ -51,7 +51,7 @@ td.fc-axis {
 
 .ev-src-0 { background-color: #ffb0b0; }
 .ev-src-1 { background-color: #ffffb0; }
-.ev-src-2 { background-color: #b0ffff; }
+.ev-src-2 { background-color: #b0ffb0; }
 .ev-src-3 { background-color: #b0b0b0; }
 .ev-src-4 { background-color: #b0b0ff; }
 .ev-src-5 { background-color: #ffb0ff; }
@@ -59,7 +59,7 @@ td.fc-axis {
 
 .ev-src-0:hover { background-color: #efa0a0; }
 .ev-src-1:hover { background-color: #efefa0; }
-.ev-src-2:hover { background-color: #a0efef; }
+.ev-src-2:hover { background-color: #a0efa0; }
 .ev-src-3:hover { background-color: #a0a0a0; }
 .ev-src-4:hover { background-color: #a0a0ef; }
 .ev-src-5:hover { background-color: #efa0ef; }
