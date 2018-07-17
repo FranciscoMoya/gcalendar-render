@@ -174,5 +174,6 @@ function getApiKey(url_string) {
 
 function getParam(url_string, kw) {
     var url = new URL(url_string);
-    return url.searchParams.get(kw);
+    if (url) return url.searchParams.get(kw);
+    return null;
 }
